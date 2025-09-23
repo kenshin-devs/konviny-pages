@@ -1,1 +1,0 @@
-# konviny-pages
