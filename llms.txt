@@ -1,0 +1,45 @@
+# Konviny
+
+> A collection of simple and smart creative tools
+
+## Overview
+
+Konviny is a suite of web-based creative and productivity tools designed to help creators, developers, and designers work more efficiently. All tools are accessible online and free to use.
+
+## Services
+
+### Slimmage - Image Converter
+- URL: https://slimmage.konviny.com/
+- Description: Image conversion and optimization tool for web developers and designers
+
+### JustFavi - Favicon Generator
+- URL: https://justfavi.konviny.com/
+- Description: Easy-to-use favicon generator tool for websites and web applications
+
+### My Tarot Day - Daily Tarot Reading
+- URL: https://my-tarot-day.konviny.com/
+- Description: Daily tarot card reading application for spiritual guidance and reflection
+
+### Diff Utility - Comparison Tool
+- URL: https://diff-utility.konviny.com/
+- Description: Multi-format comparison tool supporting text, JSON, Excel, and image files
+
+### Visu Palette - Visual Theme Palette
+- URL: https://visu-palette.konviny.com/
+- Description: Color palette generator that extracts colors from images, generates palettes from color codes, or creates random palettes. Also available as a Chrome extension.
+
+### Yum Guess
+- URL: https://yum-guess.konviny.com/
+- Description: Interactive guessing game
+
+## Technical Stack
+
+- Framework: Next.js 14
+- Language: TypeScript
+- Styling: Tailwind CSS 3
+- Mobile-first responsive design
+- Internationalization support (next18n)
+
+## Contact
+
+For inquiries and support, visit our contact page at www.konviny.com/contact
