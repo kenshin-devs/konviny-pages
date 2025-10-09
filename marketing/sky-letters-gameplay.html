@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sky Letters - Rain Typing Game</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(180deg, #FFE5E5 0%, #FFD4B8 50%, #C8A882 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      width: 1200px;
+      height: 675px;
+      background: linear-gradient(180deg, #FFE5E5 0%, #FFD4B8 50%, #C8A882 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Sky and ground */
+    .ground {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: linear-gradient(180deg, #B89968 0%, #9D7D4F 100%);
+      z-index: 1;
+    }
+
+    /* Trees */
+    .tree {
+      position: absolute;
+      bottom: 80px;
+      z-index: 2;
+    }
+
+    .tree-trunk {
+      width: 30px;
+      height: 50px;
+      background: #8B6F47;
+      border-radius: 5px;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .tree-top {
+      width: 60px;
+      height: 80px;
+      background: #2D8659;
+      border-radius: 50% 50% 0 0;
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .tree:nth-child(1) { left: 150px; }
+    .tree:nth-child(2) { left: 400px; }
+    .tree:nth-child(3) { right: 150px; }
+
+    /* Balloon character */
+    .balloon-character {
+      position: absolute;
+      bottom: 180px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      animation: balloonFloat 3s ease-in-out infinite;
+    }
+
+    .balloon-body {
+      width: 80px;
+      height: 100px;
+      background: #B8C5D6;
+      border-radius: 50% 50% 45% 45%;
+      position: relative;
+      box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1);
+    }
+
+    .balloon-string {
+      width: 2px;
+      height: 40px;
+      background: #666;
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    @keyframes balloonFloat {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-15px); }
+    }
+
+    /* Falling words */
+    .word {
+      position: absolute;
+      background: white;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: fall linear forwards;
+      z-index: 4;
+    }
+
+    @keyframes fall {
+      from {
+        top: -50px;
+        opacity: 1;
+      }
+      to {
+        top: 500px;
+        opacity: 0.3;
+      }
+    }
+
+    /* Input area */
+    .input-area {
+      position: absolute;
+      bottom: 160px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      z-index: 5;
+    }
+
+    .input-box {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 16px;
+      font-size: 28px;
+      font-weight: 600;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    .typing-text {
+      color: #0EA5E9;
+      min-height: 35px;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 3px;
+      height: 30px;
+      background: #0EA5E9;
+      margin-left: 2px;
+      animation: blink 1s infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    /* Stats panel */
+    .stats-panel {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 20px 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      display: flex;
+      gap: 40px;
+      align-items: center;
+      z-index: 5;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .stat-label {
+      color: #666;
+    }
+
+    .stat-value {
+      color: #FF6B6B;
+      font-size: 24px;
+    }
+
+    .stat-value.score {
+      color: #FF6B6B;
+    }
+
+    .stat-value.combo {
+      color: #0EA5E9;
+    }
+
+    .lives {
+      display: flex;
+      gap: 5px;
+    }
+
+    .life {
+      width: 16px;
+      height: 16px;
+      background: #FF6B6B;
+      border-radius: 50%;
+    }
+
+    .timer {
+      color: #FF8C42;
+      font-size: 22px;
+    }
+
+    /* UI elements */
+    .ui-buttons {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .ui-button {
+      width: 50px;
+      height: 50px;
+      background: white;
+      border: 3px solid #FF8C42;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* Branding */
+    .branding {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+    }
+
+    .logo {
+      background: white;
+      padding: 15px 25px;
+      border-radius: 12px;
+      font-size: 28px;
+      font-weight: 800;
+      color: #0EA5E9;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .game-title {
+      position: absolute;
+      top: 90px;
+      left: 20px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #666;
+      background: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* Success animation */
+    .success-particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #4CAF50;
+      border-radius: 50%;
+      animation: particle 1s ease-out forwards;
+      z-index: 6;
+    }
+
+    @keyframes particle {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--tx), var(--ty)) scale(0);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Branding -->
+    <div class="branding">
+      <div class="logo">
+        <span>⌨️</span>
+        <span>Sky Letters</span>
+      </div>
+    </div>
+    <div class="game-title">Rain Typing Game 🌧️</div>
+
+    <!-- UI Buttons -->
+    <div class="ui-buttons">
+      <div class="ui-button">🏠</div>
+      <div class="ui-button">🔊</div>
+      <div class="ui-button">🌙</div>
+    </div>
+
+    <!-- Trees -->
+    <div class="tree">
+      <div class="tree-top"></div>
+      <div class="tree-trunk"></div>
+    </div>
+    <div class="tree">
+      <div class="tree-top"></div>
+      <div class="tree-trunk"></div>
+    </div>
+    <div class="tree">
+      <div class="tree-top"></div>
+      <div class="tree-trunk"></div>
+    </div>
+
+    <!-- Balloon Character -->
+    <div class="balloon-character">
+      <div class="balloon-body"></div>
+      <div class="balloon-string"></div>
+    </div>
+
+    <!-- Falling words container -->
+    <div id="falling-words"></div>
+
+    <!-- Input area -->
+    <div class="input-area">
+      <div class="input-box">
+        <div class="typing-text">
+          <span id="typed-text"></span><span class="cursor"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats panel -->
+    <div class="stats-panel">
+      <div class="stat">
+        <span class="stat-label">Score:</span>
+        <span class="stat-value score" id="score">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Combo:</span>
+        <span class="stat-value combo">×<span id="combo">0</span></span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Lives:</span>
+        <div class="lives">
+          <div class="life"></div>
+          <div class="life"></div>
+          <div class="life"></div>
+          <div class="life"></div>
+        </div>
+      </div>
+      <div class="stat">
+        <span class="timer">⏱️ <span id="timer">02:49.71</span></span>
+      </div>
+    </div>
+
+    <!-- Ground -->
+    <div class="ground"></div>
+  </div>
+
+  <script>
+    const words = [
+      'bathroom', 'wind', 'now', 'indigo', 'philosophy', 'wide',
+      'justice', 'keyboard', 'typing', 'speed', 'accuracy', 'practice',
+      'challenge', 'improve', 'skill', 'focus', 'rhythm', 'master'
+    ];
+
+    let score = 0;
+    let combo = 0;
+    let currentWordIndex = 0;
+    let typingWords = [''];
+
+    // Create falling words
+    function createFallingWord() {
+      const word = words[Math.floor(Math.random() * words.length)];
+      const wordElement = document.createElement('div');
+      wordElement.className = 'word';
+      wordElement.textContent = word;
+      wordElement.style.left = Math.random() * 80 + 10 + '%';
+      wordElement.style.animationDuration = (Math.random() * 3 + 5) + 's';
+
+      document.getElementById('falling-words').appendChild(wordElement);
+
+      setTimeout(() => {
+        if (wordElement.parentElement) {
+          wordElement.remove();
+        }
+      }, 8000);
+    }
+
+    // Simulate typing
+    function simulateTyping() {
+      const currentWord = typingWords[currentWordIndex];
+      const targetWord = words[currentWordIndex % words.length];
+
+      if (currentWord.length < targetWord.length) {
+        typingWords[currentWordIndex] += targetWord[currentWord.length];
+        document.getElementById('typed-text').textContent = typingWords[currentWordIndex];
+
+        setTimeout(simulateTyping, 150 + Math.random() * 100);
+      } else {
+        // Word complete
+        score += 10 * (combo + 1);
+        combo++;
+        document.getElementById('score').textContent = score;
+        document.getElementById('combo').textContent = combo;
+
+        // Create success particles
+        createSuccessParticles();
+
+        setTimeout(() => {
+          typingWords[currentWordIndex] = '';
+          currentWordIndex++;
+          typingWords.push('');
+          document.getElementById('typed-text').textContent = '';
+          setTimeout(simulateTyping, 500);
+        }, 300);
+      }
+    }
+
+    // Create success particles
+    function createSuccessParticles() {
+      const inputBox = document.querySelector('.input-box');
+      const rect = inputBox.getBoundingClientRect();
+
+      for (let i = 0; i < 8; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'success-particle';
+        particle.style.left = rect.left + rect.width / 2 + 'px';
+        particle.style.top = rect.top + rect.height / 2 + 'px';
+
+        const angle = (Math.PI * 2 * i) / 8;
+        const distance = 50 + Math.random() * 30;
+        particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+        particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+
+        document.body.appendChild(particle);
+
+        setTimeout(() => particle.remove(), 1000);
+      }
+    }
+
+    // Update timer
+    let time = 169.71;
+    function updateTimer() {
+      time -= 0.01;
+      const minutes = Math.floor(time / 60);
+      const seconds = (time % 60).toFixed(2);
+      document.getElementById('timer').textContent =
+        `0${minutes}:${seconds.padStart(5, '0')}`;
+    }
+
+    // Start animations
+    setInterval(createFallingWord, 1200);
+    setInterval(updateTimer, 10);
+    setTimeout(simulateTyping, 1000);
+  </script>
+</body>
+</html>
